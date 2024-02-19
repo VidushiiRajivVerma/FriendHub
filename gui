@@ -1,0 +1,214 @@
+import tkinter as tk
+from tkinter import filedialog, messagebox, simpledialog
+
+class FrontPage:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Friends")
+        self.master.geometry("300x200")
+        self.master.configure(bg="blue")
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.label = tk.Label(self.master, text="Welcome to Friends", font=("Arial", 16), bg="blue", fg="white")
+        self.label.pack(pady=20)
+
+        self.start_button = tk.Button(self.master, text="Start", command=self.start_app, bg="black", fg="white")
+        self.start_button.pack(pady=10)
+
+        self.quit_button = tk.Button(self.master, text="Quit", command=self.master.destroy, bg="black", fg="white")
+        self.quit_button.pack(pady=10)
+
+    def start_app(self):
+        self.master.destroy()
+        root = tk.Tk()
+        app = SocialNetworkApp(root)
+        root.mainloop()
+
+
+class SocialNetworkApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Social Network App")
+        self.master.geometry("600x400")
+        self.master.configure(bg="white")
+
+        self.social_NW = {}
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.label = tk.Label(self.master, text="Welcome to Social Network Data!", font=("Arial", 16), bg="white")
+        self.label.pack(pady=10)
+
+        self.button_open_file = tk.Button(self.master, text="Open File", command=self.open_file, bg="black", fg="white")
+        self.button_open_file.pack()
+
+        self.button_a = tk.Button(self.master, text="Display Number of Friends", command=self.numberoffriends, bg="black", fg="white")
+        self.button_a.pack()
+
+        self.button_b = tk.Button(self.master, text="Show Member with Most Friends", command=self.most, bg="black", fg="white")
+        self.button_b.pack()
+
+        self.button_c = tk.Button(self.master, text="Show Members with Least Friends or No Friends", command=self.least, bg="black", fg="white")
+        self.button_c.pack()
+
+        self.button_d = tk.Button(self.master, text="Show Relationships for a Member", command=self.relationship, bg="black", fg="white")
+        self.button_d.pack()
+
+        self.button_e = tk.Button(self.master, text="Show Indirect Relationships (Connections) Between Members", command=self.connection, bg="black", fg="white")
+        self.button_e.pack()
+
+        self.button_f = tk.Button(self.master, text="Check if the Social Network is Consistent or Inconsistent", command=self.validate, bg="black", fg="white")
+        self.button_f.pack()
+
+        self.button_g = tk.Button(self.master, text="Get a Common Friend Count for Each Member", command=self.CommonFriend, bg="black", fg="white")
+        self.button_g.pack()
+
+        self.button_h = tk.Button(self.master, text="Give Recommendation for Friends", command=self.recommending, bg="black", fg="white")
+        self.button_h.pack()
+
+        self.quit_button = tk.Button(self.master, text="Quit", command=self.master.destroy, bg="black", fg="white")
+        self.quit_button.pack(pady=10)
+
+        self.output_text = tk.Text(self.master, height=10, width=60)
+        self.output_text.pack()
+
+    def open_file(self):
+        file_name = filedialog.askopenfilename(title="Select File", filetypes=(("Text files", "*.txt"), ("All files", "*.*")))
+        if file_name:
+            answer = messagebox.askyesno("Print File", "Do you want to print the file?")
+            if answer:
+                with open(file_name) as f:
+                    self.social_NW.clear()  # Clear previous data
+                    for line in f:
+                        parts = line.split()
+                        if len(parts) == 2:  # Ensure there are exactly two parts after splitting
+                            key, val = parts
+                            if key in self.social_NW:
+                                self.social_NW[key].append(val)
+                            else:
+                                self.social_NW[key] = [val]
+                        # else:
+                        #     self.display_output(f"Ignoring line '{line.strip()}' as it does not contain exactly two values.")
+
+                # Construct and display the relationships in the desired format
+                relationships_text = ""
+                for key, val in self.social_NW.items():
+                    relationships_text += f"{key} -> {val}\n"
+                self.display_output(relationships_text)
+
+    def numberoffriends(self):
+        key = self.prompt_for_input("Enter the Member name:")
+        if key in self.social_NW:
+            num_of_friend = len(self.social_NW[key])
+            if num_of_friend == 1:
+                self.display_output(f"{key} has {num_of_friend} friend")
+            else:
+                self.display_output(f"{key} has {num_of_friend} friends")
+        else:
+            self.display_output(f"{key} is not found in the social network.")
+
+    def most(self):
+        d = {}
+        for key, value in self.social_NW.items():
+            f_count = len([item for item in value if item])
+            d[key] = f_count
+        max_value = max(d, key=d.get)
+        self.display_output(f"{max_value} is the member with most number of friends.")
+
+    def least(self):
+        d = {}
+        for key, value in self.social_NW.items():
+            f_count = len([item for item in value if item])
+            d[key] = f_count
+        min_value = min(d.values())
+        key_w_min = [key for key in d if d[key] == min_value]
+        self.display_output("The members with least friends are " + str(key_w_min))
+
+    def relationship(self):
+        key_input = self.prompt_for_input("Enter the Member name:")
+        if key_input in self.social_NW:
+            friends = self.social_NW[key_input]
+            self.display_output(f"{key_input} is friends with {friends}")
+        else:
+            self.display_output(f"{key_input} is not found in the social network.")
+
+    def connection(self):
+        main_friend = self.prompt_for_input("Enter Member Name:")
+        if main_friend in self.social_NW:
+            main_direct_friends = self.social_NW[main_friend]
+            for f in main_direct_friends:
+                if f in self.social_NW:
+                    indirect_friends = self.social_NW[f]
+                    self.display_output(f"The Indirect relationships for {main_friend} are {indirect_friends}")
+        else:
+            self.display_output(f"{main_friend} is not found in the social network.")
+
+    def validate(self):
+        inconsistent_count = 0
+        consistent_count = 0
+        for key, val in self.social_NW.items():
+            main_direct_friend = self.social_NW[key]
+            for f in main_direct_friend:
+                if f in self.social_NW:
+                    indirect_friends = self.social_NW[f]
+                    if f not in indirect_friends:
+                        inconsistent_count += 1
+                    else:
+                        consistent_count += 1
+        if inconsistent_count > consistent_count:
+            self.display_output("The network is inconsistent.")
+        elif inconsistent_count < consistent_count:
+            self.display_output("The network is consistent.")
+        else:
+            self.display_output("The network is consistent.")
+
+    def CommonFriend(self):
+        common_friends = {}
+        for main_friend, common_friend in self.social_NW.items():
+            friends_lists = [[] for _ in range(len(common_friend))]
+            for key, val in self.social_NW.items():
+                for i, friend in enumerate(common_friend):
+                    if friend in val:
+                        friends_lists[i].append(1)
+                    else:
+                        friends_lists[i].append(0)
+            common_friends[main_friend] = [sum(l) for l in zip(*friends_lists)]
+
+        self.display_output("The common friends in the social network are :")
+        for key, value in common_friends.items():
+            self.display_output(f"{key} -> {value}")
+
+    def recommending(self):
+        main_friend = self.prompt_for_input("Enter Member Name:")
+        if main_friend in self.social_NW:
+            main_direct_friends = self.social_NW[main_friend]
+            for f in main_direct_friends:
+                if f in self.social_NW:
+                    indirect_friends = self.social_NW[f]
+                    if main_friend in indirect_friends:
+                        indirect_friends.remove(main_friend)  # removes the person itself
+                    friends = self.social_NW[main_friend]
+                    z = [item for item in indirect_friends if item not in friends]
+                    if len(z) != 0:
+                        self.display_output("Recommended friend for main_friend is " + str(z))
+                        break
+                    elif len(z) == 0:
+                        self.display_output(f"{main_friend} has no friend recommendations.")
+                        break
+        else:
+            self.display_output(f"{main_friend} is not found in the social network.")
+
+    def quite(self):
+        quit()
+    def prompt_for_input(self, message):
+        input_value = simpledialog.askstring("Input", message)
+        return input_value if input_value is not None else ""
+
+    def display_output(self, message):
+        self.output_text.insert(tk.END, message + "\n")
+
+
+root = tk.Tk()
+app = FrontPage(root)
+root.mainloop()
