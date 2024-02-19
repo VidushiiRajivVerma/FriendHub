@@ -1,0 +1,178 @@
+print("                                               Welcome to Social Network Data! ")
+bar = ("=====================================================================================================================================================================")
+space = ("                                                             ")
+print(bar)
+class Main:
+    def openFile(self):
+        file_name = input('Enter the file name: ')
+        answer = input("Do you want to print the file? :")
+        global social_NW
+        social_NW = {}
+        if answer == "yes":
+            with open(file_name) as f:
+                for line in f:
+                    parts = line.split()
+                    if len(parts) == 2:  # Ensure there are exactly two parts after splitting
+                        key, val = parts
+                        if key in social_NW:
+                            social_NW[key].append(val)
+                        else:
+                            social_NW[key] = [val]
+                    else:
+                        print(f"Ignoring line '{line.strip()}' as it does not contain exactly two values.")
+
+            # Now printing the social network
+            for key, val in social_NW.items():
+                print(f"{key} -> {val}")
+
+
+        else:
+            print("You chose not to open the file.")
+
+Function = Main()
+Function.openFile()
+
+class Feature3:
+    def numberoffriends(self):
+        global social_NW
+        key = input("Enter the Member name :")
+        num_of_friend = (len((social_NW[key])))
+        if num_of_friend == 1:
+            print(f"{key} has {num_of_friend} friend")
+        else:
+            print(f"{key} has {num_of_friend} friends")
+
+    def most(self):
+        global social_NW
+        for key, value in social_NW.items():
+            f_count = len([item for item in value if item])
+            d[key] = f_count
+        max_value = max(d, key=d.get)
+        print(max_value, "is the member with most number of friends.")
+
+    def least(self):
+        global social_NW
+        for key, value in social_NW.items():
+            f_count = len([item for item in value if item])
+            d[key] = f_count
+        min_value = min(d.values())
+        key_w_min = [key for key in d if d[key] == min_value]
+        print("The members with least friends are " + str(key_w_min))
+
+    def relationship(self):
+        global social_NW
+        key_input = input("Enter the Member name :")
+        friends = social_NW[key_input]
+        print(f"{key_input} is friends with {friends}")
+
+    def connection(self):
+        global social_NW
+        main_friend = (input("Enter Member Name :"))
+        main_direct_friends = social_NW[main_friend]
+        for f in main_direct_friends:
+            if f not in social_NW:
+                pass
+            else:
+                indirect_friends = social_NW[f]
+                print(f">>> The Indirect relationships for {main_friend} are {indirect_friends}")
+
+    def validate(self):
+        global social_NW
+        inconsistent_count = 0
+        consistent_count = 0
+        for key, val in social_NW.items():
+            main_direct_friend = social_NW[key]
+            for f in main_direct_friend:
+                if f not in social_NW:
+                    pass
+                else:
+                    indirect_friends = social_NW[f]
+                    if f not in indirect_friends:
+                        inconsistent_count = inconsistent_count + 1
+                    else:
+                        consistent_count = consistent_count + 1
+        if inconsistent_count > consistent_count:
+            print("The network is inconsistent.")
+        elif inconsistent_count < consistent_count:
+            print("The network is consistent.")
+        else:
+            print("The network is consistent.")
+
+class Feature2:
+    def CommonFriend(self):
+        global social_NW
+        common_friends = {}
+        for main_friend, common_friend in social_NW.items():
+            friends_lists = [[] for _ in range(len(common_friend))]
+            for key, val in social_NW.items():
+                for i, friend in enumerate(common_friend):
+                    if friend in val:
+                        friends_lists[i].append(1)
+                    else:
+                        friends_lists[i].append(0)
+            common_friends[main_friend] = [sum(l) for l in zip(*friends_lists)]
+
+        print("The common friends in the social network are :")
+        for key, value in common_friends.items():
+            print(f"{key} -> {value}")
+
+    def recommending(self):
+        global social_NW
+        main_friend = (input("Enter Member Name :"))
+        main_direct_friends = social_NW[main_friend]
+        for f in main_direct_friends:
+            if f not in social_NW:
+                pass
+            else:
+                indirect_friends = social_NW[f]
+                if main_friend in indirect_friends:
+                    indirect_friends.remove(main_friend)  # removes the person itself
+                friends = (social_NW[main_friend])
+                z = [item for item in indirect_friends if item not in friends]
+                if len(z) != 0:
+                    print("Recommended friend for main_friend is", z)
+                    break
+                elif len(z) == 0:
+                    print(f"{main_friend} has no friend recommendations.")
+                    break
+
+
+
+
+
+Full = Feature3()
+Half = Feature2()
+
+while True:
+    bar = ("===============================================================")
+    space = ("                                                             ")
+    print(bar)
+    print("Choose an option to continue:")
+    print(space)
+    print("A. Display how many friends a given member has")
+    print("B. Show the member with the most number of friends")
+    print("C. Show the members with the least number of friends or no friends")
+    print("D. Show the relationships for a given member")
+    print("E. Show indirect relationships (connections) between members:")
+    print("F. Check if the social network is consistent or inconsistent:")
+    print("G. To get a common friend count for each member of the social network:")
+    print("H. To give recommendation friends:")
+    print(space)
+    d = dict()  # Initialize the dictionary here
+    user_entered = input("Enter your option :")
+    if user_entered == "A":
+        Full.numberoffriends()
+    if user_entered == "B":
+        Full.most()
+    if user_entered == "C":
+        Full.least()
+    if user_entered == "D":
+        Full.relationship()
+    if user_entered == "E":
+        Full.connection()
+    if user_entered == "F":
+        Full.validate()
+    if user_entered == "G":
+        Half.CommonFriend()  # Corrected method name to match class definition
+    if user_entered == "H":
+        Half.recommending()
