@@ -4,13 +4,13 @@ from tkinter import filedialog, messagebox, simpledialog
 class FrontPage:
     def __init__(self, master):
         self.master = master
-        self.master.title("Friends")
+        self.master.title("FriendHub")
         self.master.geometry("300x200")
-        self.master.configure(bg="blue")
+        self.master.configure(bg="light grey")
         self.create_widgets()
 
     def create_widgets(self):
-        self.label = tk.Label(self.master, text="Welcome to Friends", font=("Arial", 16), bg="blue", fg="white")
+        self.label = tk.Label(self.master, text="Welcome to FriendHub", font=("Arial", 16), bg="blue", fg="white")
         self.label.pack(pady=20)
 
         self.start_button = tk.Button(self.master, text="Start", command=self.start_app, bg="black", fg="white")
@@ -29,7 +29,7 @@ class FrontPage:
 class SocialNetworkApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("Social Network App")
+        self.master.title("FriendHub")
         self.master.geometry("600x400")
         self.master.configure(bg="white")
 
@@ -37,7 +37,7 @@ class SocialNetworkApp:
         self.create_widgets()
 
     def create_widgets(self):
-        self.label = tk.Label(self.master, text="Welcome to Social Network Data!", font=("Arial", 16), bg="white")
+        self.label = tk.Label(self.master, text="Social Network Data Functions!", font=("Arial", 16), bg="white")
         self.label.pack(pady=10)
 
         self.button_open_file = tk.Button(self.master, text="Open File", command=self.open_file, bg="black", fg="white")
